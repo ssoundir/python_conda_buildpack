@@ -1,0 +1,22 @@
+#
+# Use the pre-installed conda
+#
+echo "Unpacking pre-installed miniconda python binaries/libraries ..."
+
+cat $BIN_DIR/../miniconda-binaries/miniconda-binariesa* > $TMP_APP_DIR/miniconda-binaries.zip
+unzip -o $TMP_APP_DIR/miniconda-binaries.zip -d $BUILD_DIR > /dev/null
+
+rm $TMP_APP_DIR/miniconda-binaries.zip
+
+if [ -f conda-requirements.txt ]; then
+    puts-step "Installing dependencies using Conda"
+    conda install --file conda-requirements.txt --yes | indent
+fi
+
+if [ -f requirements.txt ]; then
+    puts-step "Installing dependencies using Pip"
+    pip install -r requirements.txt  --exists-action=w --allow-all-external | indent
+fi
+
+# Clean up the installation environment .
+conda clean -pt --yes > /dev/null
